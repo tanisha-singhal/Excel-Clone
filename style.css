@@ -205,3 +205,19 @@ body {
 .input-cell.left-selected{
   border-left:none;
 }
+.menu-icon.selected{
+  background-color: lightgray;
+}
+.input-cell:hover{
+  cursor:cell;
+}
+#fill-color{
+  border-bottom:4px solid #fff;
+  padding-bottom:2px;
+}
+#text-color{
+  border-bottom:4px solid #444;
+  padding-bottom:2px;
+}
+
+  

@@ -18,13 +18,27 @@ for (let i = 1; i <= 100; i++) {
   $("#columns").append(`<div class="column-name">${str}</div>`);
   $("#rows").append(`<div class="row-name">${i}</div>`);
 }
+let cellData = [];
 for (let i = 1; i <= 100; i++) {
   let row = $(`<div class="cells-row"></div>`);
+  let rowArray = [];
   for (let j = 1; j <= 100; j++) {
     row.append(
       `<div id="row-${i}-col-${j}" class="input-cell" contenteditable="false"></div>`
     );
+    rowArray.push({
+      "font-family": "Noto Sans",
+      "font-size": 14,
+      text: "",
+      bold: false,
+      italic: false,
+      underlined: false,
+      alignment: "left",
+      color: "",
+      bgcolor: "",
+    });
   }
+  cellData.push(rowArray);
   $("#cells").append(row);
 }
 $("#cells").scroll(function (e) {
@@ -32,6 +46,10 @@ $("#cells").scroll(function (e) {
   $("#rows").scrollTop(this.scrollTop);
 });
 $(".input-cell").dblclick(function (e) {
+  $(".input-cell.selected").removeClass(
+    "selected top-selected bottom-selected right-selected left-selected"
+  );
+  $(this).addClass("selected");
   $(this).attr("contenteditable", "true");
   $(this).focus();
 });
@@ -60,25 +78,28 @@ $(".input-cell").click(function (e) {
   );
   if ($(this).hasClass("selected") && e.ctrlKey) {
     unselectCell(this, e, topCell, bottomCell, leftCell, rightCell);
-  }else{
+  } else {
     selectCell(this, e, topCell, bottomCell, rightCell, leftCell);
   }
-  
 });
-function unselectCell(ele,e,topCell,bottomCell,leftCell,rightCell){
-  if($(ele).hasClass("top-selected")){
-    topCell.removeClass("bottom-selected");
+function unselectCell(ele, e, topCell, bottomCell, leftCell, rightCell) {
+  if ($(ele).attr("contenteditable") == "false") {
+    if ($(ele).hasClass("top-selected")) {
+      topCell.removeClass("bottom-selected");
+    }
+    if ($(ele).hasClass("bottom-selected")) {
+      bottomCell.removeClass("top-selected");
+    }
+    if ($(ele).hasClass("left-selected")) {
+      leftCell.removeClass("right-selected");
+    }
+    if ($(ele).hasClass("right-selected")) {
+      rightCell.removeClass("left-selected");
+    }
+    $(ele).removeClass(
+      "selected top-selected right-selected bottom-selected left-selected"
+    );
   }
-  if($(ele).hasClass("bottom-selected")){
-    bottomCell.removeClass("top-selected");
-  }
-  if($(ele).hasClass("left-selected")){
-    leftCell.removeClass("right-selected");
-  }
-  if($(ele).hasClass("right-selected")){
-    rightCell.removeClass("left-selected");
-  }
-  $(ele).removeClass("selected top-selected right-selected bottom-selected left-selected");
 }
 function selectCell(ele, e, topCell, bottomCell, rightCell, leftCell) {
   if (e.ctrlKey) {
@@ -120,4 +141,199 @@ function selectCell(ele, e, topCell, bottomCell, rightCell, leftCell) {
     );
   }
   $(ele).addClass("selected");
+  changeHeader(getRowCol(ele));
 }
+function changeHeader([rowId, colId]) {
+  let data = cellData[rowId - 1][colId - 1];
+  $(".alignment.selected").removeClass("selected");
+  $(`.alignment[data-type=${data.alignment}]`).addClass("selected");
+  addRemoveFontStyleHandler(data, "bold");
+  addRemoveFontStyleHandler(data, "italic");
+  addRemoveFontStyleHandler(data, "underlined");
+}
+function addRemoveFontStyleHandler(data, property) {
+  if (data[property]) {
+    $(`#${property}`).addClass("selected");
+  } else {
+    $(`#${property}`).removeClass("selected");
+  }
+}
+let startCellSelected = false;
+let startCell = {};
+let endCell = {};
+let scrollXrStarted = false;
+let scrollXlStarted = false;
+$(".input-cell").mousemove(function (e) {
+  e.preventDefault();
+  if (e.buttons == 1) {
+    if (e.pageX > $(window).width() - 100 && !scrollXrStarted) {
+      scrollXR();
+    } else if (e.pageX < 100 && !scrollXlStarted) {
+      scrollXL();
+    }
+    if (!startCellSelected) {
+      let [rowId, colId] = getRowCol(this);
+      startCell = { rowId: rowId, colId: colId };
+      selectAllBetweenCells(startCell, startCell);
+      startCellSelected = true;
+    }
+  } else {
+    startCellSelected = false;
+  }
+});
+$(".input-cell").mouseenter(function (e) {
+  if (e.buttons == 1) {
+    if (e.pageX < $(window).width() - 100 && scrollXrStarted) {
+      clearInterval(scrollXRInterval);
+      scrollXrStarted = false;
+    }
+
+    if (e.pageX > 100 && scrollXlStarted) {
+      clearInterval(scrollXLInterval);
+      scrollXlStarted = false;
+    }
+
+    let [rowId, colId] = getRowCol(this);
+    endCell = { rowId: rowId, colId: colId };
+    selectAllBetweenCells(startCell, endCell);
+  }
+});
+function selectAllBetweenCells(start, end) {
+  $(".input-cell.selected").removeClass(
+    "selected top-selected bottom-selected right-selected left-selected"
+  );
+  for (
+    let i = Math.min(start.rowId, end.rowId);
+    i <= Math.max(start.rowId, end.rowId);
+    i++
+  ) {
+    for (
+      let j = Math.min(start.colId, end.colId);
+      j <= Math.max(start.colId, end.colId);
+      j++
+    ) {
+      let [topCell, bottomCell, rightCell, leftCell] =
+        getTopLeftBottomRightCell(i, j);
+      selectCell(
+        $(`#row-${i}-col-${j}`)[0],
+        { ctrlKey: true },
+        topCell,
+        bottomCell,
+        rightCell,
+        leftCell
+      );
+    }
+  }
+}
+let scrollXRInterval;
+let scrollXLInterval;
+function scrollXR() {
+  scrollXrStarted = true;
+  scrollXRInterval = setInterval(() => {
+    $("#cells").scrollLeft($("#cells").scrollLeft() + 100);
+  }, 100);
+}
+function scrollXL() {
+  scrollXlStarted = true;
+  scrollXLInterval = setInterval(() => {
+    $("#cells").scrollLeft($("#cells").scrollLeft() - 100);
+  }, 100);
+}
+$(".input-cell").mouseup(function (e) {
+  clearInterval(scrollXRInterval);
+  clearInterval(scrollXLInterval);
+  scrollXrStarted = false;
+  scrollXlStarted = false;
+});
+$(".alignment").click(function (e) {
+  let alignment = $(this).attr("data-type");
+  $(".alignment.selected").removeClass("selected");
+  $(this).addClass("selected");
+  $(".input-cell.selected").css("text-align", alignment);
+  $(".input-cell.selected").each(function (index, data) {
+    let [rowId, colId] = getRowCol(data);
+    cellData[rowId - 1][colId - 1].alignment = alignment;
+  });
+});
+$("#bold").click(function (e) {
+  setStyle(this, "bold", "font-weight", "bold");
+});
+$("#italic").click(function (e) {
+  setStyle(this, "italic", "font-style", "italic");
+});
+$("#underlined").click(function (e) {
+  setStyle(this, "underlined", "text-decoration", "underline");
+});
+function setStyle(ele, property, key, value) {
+  if ($(ele).hasClass("selected")) {
+    $(ele).removeClass("selected");
+    $(".input-cell.selected").css(key, "");
+    $(".input-cell.selected").each(function (index, data) {
+      let [rowId, colId] = getRowCol(data);
+      cellData[rowId - 1][colId - 1][property] = false;
+    });
+  } else {
+    $(this).addClass("selected");
+    $(".input-cell.selected").css(key, value);
+    $(".input-cell.selected").each(function (index, data) {
+      let [rowId, colId] = getRowCol(data);
+      cellData[rowId - 1][colId - 1][property] = true;
+    });
+  }
+}
+$(".pick-color").colorPick({
+  initialColor:"#abcd",
+  allowRecent: true,
+
+  recentMax: 5,
+
+  allowCustomColor: true,
+
+  palette: [
+    "#1abc9c",
+    "#16a085",
+    "#2ecc71",
+    "#27ae60",
+    "#3498db",
+    "#2980b9",
+    "#9b59b6",
+    "#8e44ad",
+    "#34495e",
+    "#2c3e50",
+    "#f1c40f",
+    "#f39c12",
+    "#e67e22",
+    "#d35400",
+    "#e74c3c",
+    "#c0392b",
+    "#ecf0f1",
+    "#bdc3c7",
+    "#95a5a6",
+    "#7f8c8d",
+  ],
+
+  onColorSelected: function () {
+    if(this.color!="#ABCD"){
+      if($(this.element.children()[1]).attr("id")=="fill-color"){
+        $(".input-cell.selected").css("background-color",this.color);
+        $("#fill-color").css("border-bottom",`4px solid ${this.color}`);
+      }
+      if($(this.element.children()[1]).attr("id")=="text-color"){
+        $(".input-cell.selected").css("color",this.color);
+        $("#text-color").css("border-bottom",`4px solid ${this.color}`)
+      }
+    }
+  },
+});
+$("#fill-color").click(function(e){
+  setTimeout(()=>{
+    $(this).parent().click();
+  },10)
+  
+})
+$("#text-color").click(function(e){
+  setTimeout(()=>{
+    $(this).parent().click();
+  },10)
+  
+})
