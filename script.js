@@ -337,3 +337,32 @@ $("#text-color").click(function(e){
   },10)
   
 })
+$(".sheet-tab").bind("contextmenu",function(e){
+  e.preventDefault();
+  selectSheet(this);
+  $(".sheet-option-modal").remove();
+  let modal =$(` <div class="sheet-option-modal">
+  <div class="option sheet-rename">Rename</div>
+  <div class="option sheet-delete">Delete</div>
+</div>`)
+$(".container").append(modal);
+  $(".sheet-option-modal").css({"bottom":0.04*$(window).height(), "left":e.pageX});
+$(".sheet-rename").click(function(e){
+  $(".sheet-tab.selected").attr("contenteditable",true);
+  $(".sheet-tab.selected").focus();
+})
+})
+function selectSheet(ele){
+  $(".sheet-tab.selected").removeClass("selected");
+  $(ele).addClass("selected");
+}
+$(".container").click(function(e){
+  $(".sheet-option-modal").remove();
+})
+$(".sheet-tab").blur(function(e){
+  $(".sheet-tab").attr("contenteditable",false);
+})
+$(".sheet-tab").click(function(e){
+  selectSheet(this);
+})
+

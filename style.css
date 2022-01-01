@@ -12,6 +12,7 @@ body {
   background-color: white;
   height: 100vh;
   font-family: sans-serif;
+  position:relative;
 }
 .title {
   background-color: #337545;
@@ -219,5 +220,66 @@ body {
   border-bottom:4px solid #444;
   padding-bottom:2px;
 }
-
+.sheets-bar{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  height:4vh;
+  width:100vw;
+}
+.sheet-scroller{
+  margin-right:20px;
+  display:flex;
+  align-items:center;
+}
+.sheet-tab-container{
+  margin-right:10px;
+  display:flex;
+  border-left:0.5px solid lightgray;
+}
+.sheet-tab{
+  display:flex;
+  justify-content:center;
+  padding-top:3px;
+  padding-left:10px;
+  padding-right:10px;
+  border-right:0.5px solid lightgray;
+  font-weight:600;
+}
+.sheet-tab:hover{
+  background-color:lightgray;
+  cursor:pointer;
+}
+.sheet-tab.selected{
+  color:green;
+  border-bottom:5px solid green;
+  outline:none;
+}
+.sheet-tab.selected:hover{
+  background-color:#fff;
+  cursor:default;
+}
+.add-sheet{
+  color:green;
+}
+.add-sheet:hover, .scroller:hover{
+  cursor:pointer;
+  transform:scale(1.2);
+}
+.scroller{
+  font-size:30px;
+}
+.sheet-option-modal{
+  position:absolute;
+  background-color:#fff;
+  box-shadow: rgb(0 0 0 / 13%) 0px 6.4px 14.4px 0px, rgb(0 0 0 / 11%) 0px 1.2px 3.;
+  border-radius:5px;
+}
+.option{
+  padding:7px 15px 7px 15px;
   
+}
+.option:hover{
+  cursor:default;
+  background-color: lightgray;
+}
