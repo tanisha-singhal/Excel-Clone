@@ -455,27 +455,32 @@ function addSheetEvents() {
       });
     });
     $(".sheet-delete").click(function (e) {
-      let deleteModal = $(`<div class="sheet-modal-parent">
-      <div class="sheet-delete-modal">
-        <div class="sheet-modal-title">
-          <span>Delete Sheet</span>
-        </div>
-        <div class="sheet-delete-message">
-          <div class="delete-icon"><img src="https://img.icons8.com/ios-glyphs/30/000000/filled-trash.png"/></div>
-          <span>Are you sure you want to delete?</span>
-        </div>
-        <div class="sheet-delete-confirmation">
-          <div class="button delete-button">Delete</div>
-          <div class="button cancel-button">Cancel</div>
-        </div>
-      </div> `);
-      $(".container").append(deleteModal);
-      $(".cancel-button").click(function (e) {
-        $(".sheet-modal-parent").remove();
-      });
-      $(".delete-button").click(function (e) {
-        deleteSheet();
-      });
+      if(totalSheets>1){
+        let deleteModal = $(`<div class="sheet-modal-parent">
+        <div class="sheet-delete-modal">
+          <div class="sheet-modal-title">
+            <span>Delete Sheet</span>
+          </div>
+          <div class="sheet-delete-message">
+            <div class="delete-icon"><img src="https://img.icons8.com/ios-glyphs/30/000000/filled-trash.png"/></div>
+            <span>Are you sure you want to delete?</span>
+          </div>
+          <div class="sheet-delete-confirmation">
+            <div class="button delete-button">Delete</div>
+            <div class="button cancel-button">Cancel</div>
+          </div>
+        </div> `);
+        $(".container").append(deleteModal);
+        $(".cancel-button").click(function (e) {
+          $(".sheet-modal-parent").remove();
+        });
+        $(".delete-button").click(function (e) {
+          deleteSheet();
+        });
+      }else{
+        alert("Not Possible");
+      }
+      
     });
   });
 
