@@ -602,9 +602,9 @@ $(".file").click(function (e) {
   <span class="close-icon close"><img src="https://img.icons8.com/ios/25/ffffff/circled-left-2.png"/></span>
   <div class="close-button close">Close</div>
   </div>
-  <div class="listItem"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/new-file.png"/></span>New</div>
-  <div class="listItem"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/opened-folder.png"/></span>Open</div>
-  <div class="listItem"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/save--v1.png"/></span>Save</div>
+  <div class="new"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/new-file.png"/></span>New</div>
+  <div class="open"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/opened-folder.png"/></span>Open</div>
+  <div class="save"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/save--v1.png"/></span>Save</div>
   </div>
   
   <div class="file-recent-modal"></div>
@@ -617,9 +617,15 @@ $(".file").click(function (e) {
   $(".container").append(fileModal);
   fileModal.animate({
     width:"100vw"
-  })
+  },300)
   $(".close,.file-transparent").click(function (e) {
-    fileModal.remove();
+    fileModal.animate({
+      width:"0vw"
+    },300)
+    setTimeout(()=>{
+      fileModal.remove();
+    },250)
+    
   });
  
 });

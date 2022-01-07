@@ -401,7 +401,7 @@ font-size:20px;
 padding-left:10px;
 }
 
-.listItem{
+.new, .open, .save{
   display:flex;
   flex-direction: row;
   align-items: center;
@@ -412,7 +412,7 @@ padding-left:10px;
   padding-top:10px;
 
 }
-.listItem:hover{
+.new:hover, .open:hover, .save:hover{
   background-color: rgba(18, 71, 18, 0.555);
 }
 .file-recent-modal{
