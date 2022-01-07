@@ -455,7 +455,7 @@ function addSheetEvents() {
       });
     });
     $(".sheet-delete").click(function (e) {
-      if(totalSheets>1){
+      if (totalSheets > 1) {
         let deleteModal = $(`<div class="sheet-modal-parent">
         <div class="sheet-delete-modal">
           <div class="sheet-modal-title">
@@ -477,10 +477,9 @@ function addSheetEvents() {
         $(".delete-button").click(function (e) {
           deleteSheet();
         });
-      }else{
+      } else {
         alert("Not Possible");
       }
-      
     });
   });
 
@@ -541,6 +540,7 @@ $(".add-sheet").click(function (e) {
   );
 
   addSheetEvents();
+  $(".sheet-tab.selected")[0].scrollIntoView();
 });
 function renameSheet() {
   let newSheetName = $(".sheet-modal-input").val();
@@ -580,3 +580,46 @@ function deleteSheet() {
   currSelectedSheet.remove();
   totalSheets--;
 }
+$(".left-scroller,.right-scroller").click(function (e) {
+  let keyArray = Object.keys(cellData);
+  let selectedSheetIndex = keyArray.indexOf(selectedSheet);
+
+  if (selectedSheetIndex != 0 && $(this).text() == "arrow_left") {
+    selectSheet($(".sheet-tab.selected").prev()[0]);
+  } else if (
+    selectedSheetIndex != keyArray.length - 1 &&
+    $(this).text() == "arrow_right"
+  ) {
+    selectSheet($(".sheet-tab.selected").next()[0]);
+  }
+
+  $(".sheet-tab.selected")[0].scrollIntoView();
+});
+$(".file").click(function (e) {
+  let fileModal = $(`<div class="fileModal">
+  <div class="file-options">
+  <div class="closeModal">
+  <span class="close-icon close"><img src="https://img.icons8.com/ios/25/ffffff/circled-left-2.png"/></span>
+  <div class="close-button close">Close</div>
+  </div>
+  <div class="listItem"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/new-file.png"/></span>New</div>
+  <div class="listItem"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/opened-folder.png"/></span>Open</div>
+  <div class="listItem"><span class="icon"><img src="https://img.icons8.com/ios/25/ffffff/save--v1.png"/></span>Save</div>
+  </div>
+  
+  <div class="file-recent-modal"></div>
+  <div class="file-transparent"></div>
+</div>`);
+  $("fileModal").css({
+    top: 0,
+    left: 0,
+  });
+  $(".container").append(fileModal);
+  fileModal.animate({
+    width:"100vw"
+  })
+  $(".close,.file-transparent").click(function (e) {
+    fileModal.remove();
+  });
+ 
+});
