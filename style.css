@@ -294,7 +294,7 @@ body {
   justify-content:center;
   align-items:center;
 }
-.sheet-rename-modal, .sheet-delete-modal{
+.sheet-rename-modal, .sheet-delete-modal,.sheet-save-modal{
   position: absolute;
   background-color: #fff;
   padding: 15px;
@@ -328,11 +328,6 @@ body {
   display:flex;
   justify-content:space-evenly;
 }
-.sheet-delete-confirmation{
-  padding:15px;
-  display:flex;
-  justify-content: space-evenly;
-}
 .button{
   padding:10px;
   border:1px solid black;
@@ -342,7 +337,7 @@ body {
   align-items:center;
   border-radius:4px;
 }
-.ok-button, .delete-button{
+.yes-button{
   background-color: green;
   color:#fff;
   font-weight:bold;
@@ -350,19 +345,20 @@ body {
   
 }
 
-.ok-button:hover, .delete-button:hover{
+ .yes-button:hover{
   cursor:pointer;
   background-color: darkgreen;
 }
-.cancel-button:hover{
+.no-button:hover{
   cursor:pointer;
   background-color:lightgray;
 }
-.sheet-delete-message{
+.sheet-modal-message{
   display:flex;
   flex-direction:row;
   padding:20px;
   align-items: center;
+  justify-content: center;
 }
 .delete-icon{
   padding-right:10px;

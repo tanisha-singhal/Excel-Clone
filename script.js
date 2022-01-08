@@ -24,7 +24,7 @@ let selectedSheet = "Sheet1";
 let totalSheets = 1;
 let lastlyAddedSheet = 1;
 
-let cellData = { "Sheet1": [] };
+let cellData = { "Sheet1": {} };
 
 let defaultProperties = {
   "font-family": "Noto Sans",
@@ -69,6 +69,7 @@ $(".input-cell").dblclick(function (e) {
 $(".input-cell").blur(function (e) {
   $(this).attr("contenteditable", "false");
   updateCellData("text", $(this).text());
+  
 });
 
 function getRowCol(ele) {
@@ -496,18 +497,18 @@ function addSheetEvents() {
          <input class="sheet-modal-input" type="text" />
        </div>
         <div class="sheet-modal-confirmation">
-          <div class="button ok-button">OK</div>
-         <div class="button cancel-button">Cancel</div>
+          <div class="button yes-button">OK</div>
+         <div class="button no-button">Cancel</div>
        </div>
       </div> 
     
     </div> `);
       $(".container").append(renameModal);
       $(".sheet-modal-input").focus();
-      $(".cancel-button").click(function (e) {
+      $(".no-button").click(function (e) {
         $(".sheet-modal-parent").remove();
       });
-      $(".ok-button").click(function (e) {
+      $(".yes-button").click(function (e) {
         renameSheet();
       });
       $(".sheet-modal-input").keypress(function (e) {
@@ -521,22 +522,22 @@ function addSheetEvents() {
         let deleteModal = $(`<div class="sheet-modal-parent">
         <div class="sheet-delete-modal">
           <div class="sheet-modal-title">
-            <span>Delete Sheet</span>
+            <span>${selectedSheet}</span>
           </div>
-          <div class="sheet-delete-message">
+          <div class="sheet-modal-message">
             <div class="delete-icon"><img src="https://img.icons8.com/ios-glyphs/30/000000/filled-trash.png"/></div>
             <span>Are you sure you want to delete?</span>
           </div>
-          <div class="sheet-delete-confirmation">
-            <div class="button delete-button">Delete</div>
-            <div class="button cancel-button">Cancel</div>
+          <div class="sheet-modal-confirmation">
+            <div class="button yes-button">Delete</div>
+            <div class="button no-button">Cancel</div>
           </div>
         </div> `);
         $(".container").append(deleteModal);
-        $(".cancel-button").click(function (e) {
+        $(".no-button").click(function (e) {
           $(".sheet-modal-parent").remove();
         });
-        $(".delete-button").click(function (e) {
+        $(".yes-button").click(function (e) {
           deleteSheet();
         });
       } else {
@@ -704,7 +705,7 @@ $(".file").click(function (e) {
   fileModal.animate({
     width:"100vw"
   },300)
-  $(".close,.file-transparent").click(function (e) {
+  $(".close,.file-transparent,.new,.save").click(function (e) {
     fileModal.animate({
       width:"0vw"
     },300)
@@ -713,5 +714,86 @@ $(".file").click(function (e) {
     },250)
     
   });
- 
+  $(".new").click(function(e){
+    if(save){
+      newFile();
+    }else{
+      $(".container").append(`<div class="sheet-modal-parent">
+      <div class="sheet-save-modal">
+        <div class="sheet-modal-title">
+          <span>${$(".title").text()}</span>
+        </div>
+        <div class="sheet-modal-message">
+          
+          <span>Do you want to save changes?</span>
+        </div>
+        <div class="sheet-modal-confirmation">
+          <div class="button yes-button">Yes</div>
+          <div class="button no-button">No</div>
+        </div>
+      </div> `);
+    }
+
+    $(".yes-button").click(function(e){
+      //save file
+     
+    })
+
+    $(".no-button,.yes-button").click(function(e){
+      $(".sheet-modal-parent").remove();
+      newFile();
+    })
+   
+  })
+  $(".save").click(function(e){
+    saveFile();
+  })
 });
+
+function newFile(){
+  emptyPreviousSheet();
+  cellData={"Sheet1":{}};
+  $(".sheet-tab").remove();
+  $(".sheet-tab-container").append(`<div class="sheet-tab selected">Sheet1</div>`);
+  addSheetEvents();
+  selectedSheet="Sheet1";
+  totalSheets=1;
+  lastlyAddedSheet=1;
+  $(".title").text("Excel - Book");
+  $("#row-1-col-1").click();
+}
+
+function saveFile(){
+  $(".container").append(`<div class="sheet-modal-parent">
+  <div class="sheet-save-modal">
+     <div class="sheet-modal-title">
+       <span>Save File</span>
+     </div>
+     <div class="sheet-modal-input-container">
+       <span class="sheet-modal-input-title">File Name:</span>
+       <input class="sheet-modal-input" value="${$(".title").text()}" type="text" />
+     </div>
+     <div class="sheet-modal-confirmation">
+       <div class="button yes-button">Save</div>
+       <div class="button no-button">Cancel</div>
+     </div>
+   </div> 
+  
+ </div> `)
+ $(".yes-button").click(function(e){
+   $(".title").text($(".sheet-modal-input").val());
+  let a=document.createElement("a");
+  a.href=`data:application/json,${JSON.stringify(cellData)}`;
+  a.download=$(".title").text()+'.json';
+  $(".container").append(a);
+  a.click();
+  a.remove();
+  save=true;
+ })
+
+ $(".no-button,.yes-button").click(function(e){
+  $(".sheet-modal-parent").remove();
+  
+})
+
+}
