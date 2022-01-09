@@ -410,6 +410,7 @@ padding-left:10px;
 }
 .new:hover, .open:hover, .save:hover{
   background-color: rgba(18, 71, 18, 0.555);
+  cursor: pointer;
 }
 .file-recent-modal{
   background-color:white;
