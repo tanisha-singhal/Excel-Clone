@@ -226,6 +226,7 @@ $(".input-cell").mousemove(function (e) {
       startCell = { rowId: rowId, colId: colId };
       selectAllBetweenCells(startCell, startCell);
       startcellSelected = true;
+      $(".input-cell.selected").attr("contenteditable","false");
     }
   } else {
     startcellSelected = false;
@@ -845,8 +846,11 @@ function openFile(){
 }
 
 let clipboard={startCell:[],cellData:{}};
-
-$("#copy").click(function(e){
+let contentCutted=false;
+$("#cut,#copy").click(function(e){
+  if($(this).text()=="content_cut"){
+    contentCutted=true;
+  }
   clipboard={startCell:[],cellData:{}};
    clipboard.startCell=getRowCol($(".input-cell.selected")[0]);
    $(".input-cell.selected").each(function(index,data){
@@ -861,18 +865,37 @@ $("#copy").click(function(e){
    console.log(clipboard);
 })
 $("#paste").click(function(e){
+  if(contentCutted){
+    emptyPreviousSheet();
+  }
   let startCell=getRowCol($(".input-cell.selected")[0]);
   let row=Object.keys(clipboard.cellData);
   for(let i of row){
     let col=Object.keys(clipboard.cellData[i]);
     for(let j of col){
-         let rowDistance=parseInt(i)-parseInt(clipboard.startCell[0]);
-         let colDistance=parseInt(j)-parseInt(clipboard.startCell[1]);
-         if(!cellData[selectedSheet][startCell[0]+rowDistance-1]){
-          cellData[selectedSheet][startCell[0]+rowDistance-1]={};
-         }
-         cellData[selectedSheet][startCell[0]+rowDistance-1][startCell[1]+colDistance-1]={...clipboard.cellData[i][j]};
+      if(contentCutted){
+        delete cellData[selectedSheet][i-1][j-1];
+        if(Object.keys(cellData[selectedSheet][i-1]).length==0){
+          delete cellData[selectedSheet][i-1];
+        }
+      }
+         
     }
   }
+  for (let i of row) {
+    let col = Object.keys(clipboard.cellData[i]);
+    for (let j of col) {
+        let rowDistance = parseInt(i) - parseInt(clipboard.startCell[0]);
+        let colDistance = parseInt(j) - parseInt(clipboard.startCell[1]);
+        if (!cellData[selectedSheet][startCell[0] + rowDistance - 1]) {
+            cellData[selectedSheet][startCell[0] + rowDistance - 1] = {};
+        }
+        cellData[selectedSheet][startCell[0] + rowDistance - 1][startCell[1] + colDistance - 1] = { ...clipboard.cellData[i][j] };
+    }
+}
   loadCurrentSheet();
+  if(contentCutted){
+    contentCutted=false;
+    clipboard={startCell:[],cellData:{}};
+  }
 })
