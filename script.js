@@ -31,16 +31,16 @@ let cellData = { Sheet1: {} };
 let defaultProperties = {
   "font-family": "Noto Sans",
   "font-size": 14,
-  text: "",
-  bold: false,
-  italic: false,
-  underlined: false,
-  alignment: "left",
-  color: "#444",
-  bgcolor: "#fff",
-  formula: "",
-  upStream: [],
-  downStream: [],
+  "text": "",
+  "bold": false,
+  "italic": false,
+  "underlined": false,
+  "alignment": "left",
+  "color": "#444",
+  "bgcolor": "#fff",
+  "formula": "",
+  "upStream": [],
+  "downStream": [],
 };
 
 for (let i = 1; i <= 100; i++) {
@@ -71,13 +71,19 @@ $(".input-cell").dblclick(function (e) {
 $(".input-cell").blur(function (e) {
   $(this).attr("contenteditable", "false");
   let [rowId, colId] = getRowCol(this);
-  if (cellData[selectedSheet][rowId - 1][colId - 1].formula != "") {
-    updateStreams(this, []);
-  }
-  cellData[selectedSheet][rowId - 1][colId - 1].formula = "";
-  updateCellData("text", $(this).text());
+  
+  if(cellData[selectedSheet][rowId - 1]&&cellData[selectedSheet][rowId - 1][colId - 1]){
+    if (cellData[selectedSheet][rowId - 1][colId - 1].formula != "") {
+      updateStreams(this, []);
+    }
+    cellData[selectedSheet][rowId - 1][colId - 1].formula = "";
+    updateCellData("text", $(this).text());
   let selfColCode = $(`.column-${colId}`).attr("id");
   evalFormula(selfColCode + rowId);
+  }
+  updateCellData("text", $(this).text());
+  
+  
 });
 
 function getRowCol(ele) {
